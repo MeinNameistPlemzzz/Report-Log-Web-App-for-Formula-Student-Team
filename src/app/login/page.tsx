@@ -54,7 +54,7 @@ export default function LoginPage() {
               </svg>
             </div>
             <h1 className="font-display text-xl font-700 text-white tracking-widest uppercase">INITIAL</h1>
-            <p className="text-xs text-[var(--text-muted)] font-mono tracking-widest mt-1">ELECTRICITY LOG SYSTEM</p>
+            <p className="text-xs text-[var(--text-muted)] font-mono tracking-widest mt-1">REPORT LOG WEB APP</p>
           </div>
 
           {/* Error */}
@@ -138,7 +138,7 @@ export default function LoginPage() {
 
         {/* Bottom tag */}
         <p className="text-center text-[10px] font-mono text-[var(--text-muted)] tracking-widest mt-4 uppercase">
-          Automotive Club · EV Racing Team
+          Automotive Club · KMITL Formula Student Team
         </p>
       </div>
     </div>
