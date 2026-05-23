@@ -4,7 +4,7 @@ import { ThemeProvider } from "../context/ThemeContext";
 import "../globals.css";
 
 export const metadata = {
-  title: "INITIAL — Electricity Log",
+  title: "INITIAL — Report Log Web App",
   description: "ระบบบันทึกปัญหาเทคนิคประจำทีมแข่งรถสูตรไฟฟ้า",
 };
 
