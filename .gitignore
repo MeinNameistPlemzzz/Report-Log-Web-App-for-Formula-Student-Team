@@ -1,0 +1,31 @@
+# dependencies (ห้ามเอาโฟลเดอร์นี้ขึ้นเด็ดขาด)
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js build output
+/.next/
+/out/
+
+# production
+/build
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local env files (เซฟคีย์ลับ Firebase ของเรา 🌟)
+.env*.local
+.env
+.env.local
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
