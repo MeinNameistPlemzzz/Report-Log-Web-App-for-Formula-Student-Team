@@ -68,84 +68,102 @@ function CreateReportForm() {
   };
 
   const severityOptions: Array<{ value: "Critical" | "High" | "Medium" | "Low"; color: string }> = [
-    { value: "Critical", color: "border-red-500 text-red-400" },
-    { value: "High",     color: "border-orange-500 text-orange-400" },
-    { value: "Medium",   color: "border-yellow-500 text-yellow-400" },
-    { value: "Low",      color: "border-zinc-500 text-zinc-400" },
+    { value: "Critical", color: "var(--red)" },
+    { value: "High",     color: "var(--orange)" },
+    { value: "Medium",   color: "var(--yellow)" },
+    { value: "Low",      color: "var(--text-secondary)" },
   ];
 
   return (
-    <div className="flex min-h-screen bg-zinc-950">
+    <div className="flex min-h-screen" style={{ background: "var(--bg-base)" }}>
       <Sidebar />
       <main className="flex-1 lg:ml-56 p-4 lg:p-8">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
-          <div className="mb-8 pt-10 lg:pt-0 flex items-center gap-4">
-            <Link href="/" className="text-zinc-500 hover:text-zinc-300 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <div className="mb-6 pt-10 lg:pt-0">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-[13px] mb-4"
+              style={{ color: "var(--text-muted)" }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
+              กลับ
             </Link>
-            <div>
-              <h1 className="text-xl font-bold text-zinc-100 tracking-tight">Report Form</h1>
-              <p className="text-zinc-500 text-sm">บันทึกปัญหาเทคนิคใหม่</p>
-            </div>
+            <p
+              className="mb-1 text-[10.5px] uppercase tracking-wider"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}
+            >
+              New Entry
+            </p>
+            <h1
+              className="text-2xl font-bold pb-3"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)", borderBottom: "2px solid var(--border-bright)", letterSpacing: "-0.01em" }}
+            >
+              บันทึกปัญหาใหม่
+            </h1>
           </div>
 
           {/* Form card */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-5">
-
+          <div
+            className="rounded-lg p-6 space-y-5"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+          >
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">
+              <div
+                className="px-3.5 py-2.5 rounded text-[13px]"
+                style={{ background: "var(--red-dim)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)", color: "var(--red)" }}
+              >
                 {error}
               </div>
             )}
 
             {/* Problem title */}
             <div>
-              <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Problem *</label>
+              <label className="field-label">Problem *</label>
               <input
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="เช่น BMS Problem, AR Contact Issue..."
-                className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 placeholder-zinc-600 transition-colors"
+                placeholder="เช่น BMS ตัดกลางคัน, หน้าคอนแทค AR ไหม้..."
+                className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
               />
             </div>
 
             {/* Detail */}
             <div>
-              <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Detail *</label>
+              <label className="field-label">Detail *</label>
               <textarea
                 value={detail}
                 onChange={e => setDetail(e.target.value)}
                 rows={5}
-                placeholder="อธิบายรายละเอียดปัญหา สาเหตุ อาการ..."
-                className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 placeholder-zinc-600 transition-colors resize-none"
+                placeholder="อาการที่เจอ · สาเหตุที่สงสัย · เกิดตอนไหน..."
+                className="input-base w-full text-[14px] px-3.5 py-2.5 rounded resize-none leading-relaxed"
               />
             </div>
 
             {/* Department + Report Type row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Department *</label>
+                <label className="field-label">Department *</label>
                 <select
                   value={deptId}
                   onChange={e => setDeptId(e.target.value)}
-                  className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 transition-colors"
+                  className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
                 >
-                  <option value="">เลือก Department</option>
+                  <option value="">เลือกฝ่าย</option>
                   {departments.map(d => (
                     <option key={d.id} value={d.id}>{d.departName}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Type Report *</label>
+                <label className="field-label">Report Type *</label>
                 <select
                   value={typeId}
                   onChange={e => setTypeId(e.target.value)}
-                  className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 transition-colors"
+                  className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
                 >
                   <option value="">เลือกประเภท</option>
                   {reportTypes.map(r => (
@@ -157,38 +175,40 @@ function CreateReportForm() {
 
             {/* Severity */}
             <div>
-              <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-3">Level *</label>
+              <label className="field-label">Level *</label>
               <div className="flex flex-wrap gap-2">
-                {severityOptions.map(opt => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setSeverity(opt.value)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-semibold border-2 transition-all
-                      ${severity === opt.value
-                        ? `${opt.color} bg-current/10`
-                        : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
-                      }`}
-                    style={severity === opt.value ? { backgroundColor: "rgba(255,255,255,0.04)" } : {}}
-                  >
-                    {opt.value}
-                  </button>
-                ))}
+                {severityOptions.map(opt => {
+                  const active = severity === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setSeverity(opt.value)}
+                      className="px-3.5 py-1.5 rounded text-[13px] font-medium transition-all"
+                      style={{
+                        border: `1px solid ${active ? opt.color : "var(--border-bright)"}`,
+                        color: active ? opt.color : "var(--text-secondary)",
+                        background: active ? `color-mix(in srgb, ${opt.color} 10%, transparent)` : "var(--bg-surface)",
+                      }}
+                    >
+                      {opt.value}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Drive Link */}
             <div>
-              <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">
-                Other File Link
-                <span className="ml-1 text-zinc-600 normal-case">(Google Drive, etc.)</span>
+              <label className="field-label">
+                ลิงก์ไฟล์แนบ <span style={{ textTransform: "none", letterSpacing: 0 }}>(Google Drive, รูป ฯลฯ)</span>
               </label>
               <input
                 type="url"
                 value={driveLink}
                 onChange={e => setDriveLink(e.target.value)}
                 placeholder="https://drive.google.com/..."
-                className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 placeholder-zinc-600 transition-colors"
+                className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
               />
             </div>
 
@@ -196,16 +216,16 @@ function CreateReportForm() {
             <div className="flex gap-3 pt-2">
               <Link
                 href="/"
-                className="flex-1 px-4 py-2.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm text-center hover:bg-zinc-800 transition-colors"
+                className="btn-ghost flex-1 px-4 py-2.5 rounded text-[14px] text-center"
               >
-                Cancel
+                ยกเลิก
               </Link>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2.5 rounded text-[14px]"
               >
-                {submitting ? "กำลังบันทึก..." : "Done"}
+                {submitting ? "กำลังบันทึก…" : "บันทึกรายงาน"}
               </button>
             </div>
           </div>

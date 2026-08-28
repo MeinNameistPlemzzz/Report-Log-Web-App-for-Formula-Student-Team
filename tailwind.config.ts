@@ -9,46 +9,44 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Syne", "sans-serif"],
-        body:    ["DM Sans", "sans-serif"],
-        mono:    ["DM Mono", "monospace"],
+        display: ["IBM Plex Sans Thai", "IBM Plex Sans", "system-ui", "sans-serif"],
+        body:    ["IBM Plex Sans Thai", "IBM Plex Sans", "system-ui", "sans-serif"],
+        mono:    ["IBM Plex Mono", "ui-monospace", "monospace"],
       },
       colors: {
-        base:     "#080b10",
-        surface:  "#0d1117",
-        elevated: "#161b22",
-        overlay:  "#1c2330",
-        accent:   "#f97316",
+        // theme-neutral fallbacks — real colours come from CSS vars
+        base:     "var(--bg-base)",
+        surface:  "var(--bg-surface)",
+        elevated: "var(--bg-elevated)",
+        overlay:  "var(--bg-overlay)",
+        accent:   "var(--accent)",
+        brand:    "var(--brand)",
       },
-      backgroundImage: {
-        "grid-pattern":
-          "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
-      },
-      backgroundSize: {
-        "grid": "40px 40px",
-      },
-      boxShadow: {
-        "glow-orange": "0 0 20px rgba(249,115,22,0.35), 0 0 40px rgba(249,115,22,0.1)",
-        "glow-red":    "0 0 16px rgba(239,68,68,0.25)",
+      // crisp logbook corners — remap the whole radius scale tighter
+      borderRadius: {
+        none: "0",
+        sm:   "3px",
+        DEFAULT: "4px",
+        md:   "4px",
+        lg:   "5px",
+        xl:   "6px",
+        "2xl": "8px",
+        "3xl": "10px",
+        full: "9999px",
       },
       animation: {
-        "fade-up":    "fadeUp 0.4s ease both",
-        "fade-in":    "fadeIn 0.3s ease both",
-        "slide-in":   "slideIn 0.3s ease both",
-        "shimmer":    "shimmer 1.5s infinite",
+        "fade-up": "fadeUp 0.28s ease both",
+        "fade-in": "fadeIn 0.2s ease both",
+        "shimmer": "shimmer 1.4s infinite",
       },
       keyframes: {
         fadeUp: {
-          from: { opacity: "0", transform: "translateY(12px)" },
+          from: { opacity: "0", transform: "translateY(6px)" },
           to:   { opacity: "1", transform: "translateY(0)" },
         },
         fadeIn: {
           from: { opacity: "0" },
           to:   { opacity: "1" },
-        },
-        slideIn: {
-          from: { opacity: "0", transform: "translateX(-8px)" },
-          to:   { opacity: "1", transform: "translateX(0)" },
         },
         shimmer: {
           "0%":   { backgroundPosition: "-200% center" },

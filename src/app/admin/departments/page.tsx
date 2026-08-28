@@ -12,12 +12,12 @@ import Sidebar from "../../../components/Sidebar";
 
 function DeleteModal({ name, onConfirm, onCancel }: { name: string; onConfirm: () => void; onCancel: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative rounded-2xl p-6 w-full max-w-xs shadow-2xl"
-           style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-bright)" }}>
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-             style={{ background: "var(--red-dim)" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in">
+      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.45)" }} onClick={onCancel} />
+      <div className="relative rounded-lg p-6 w-full max-w-xs animate-fade-up"
+           style={{ background: "var(--bg-surface)", border: "1px solid var(--border-bright)", boxShadow: "var(--shadow)" }}>
+        <div className="w-10 h-10 rounded flex items-center justify-center mb-4"
+             style={{ background: "var(--red-dim)", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)" }}>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" style={{ color: "var(--red)" }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
@@ -98,33 +98,28 @@ function DepartmentsContent() {
         <div className="max-w-4xl mx-auto">
 
           {/* Header */}
-          <div className="mb-8 pt-10 lg:pt-0">
-            <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>Departments</h1>
-            <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>จัดการฝ่ายต่างๆ ภายในทีม</p>
+          <div className="mb-6 pt-10 lg:pt-0">
+            <p className="mb-1 text-[10.5px] uppercase tracking-wider" style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>Admin</p>
+            <h1 className="text-2xl font-bold pb-3" style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)", borderBottom: "2px solid var(--border-bright)", letterSpacing: "-0.01em" }}>ฝ่ายต่างๆ</h1>
+            <p className="text-[13px] mt-2" style={{ color: "var(--text-secondary)" }}>จัดการฝ่ายภายในทีม</p>
           </div>
 
           {/* Add form */}
-          <div className="rounded-2xl p-5 mb-6" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-            <p className="text-[10px] font-mono tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
-              เพิ่ม Department ใหม่
-            </p>
+          <div className="rounded-lg p-5 mb-6" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
+            <p className="field-label">เพิ่มฝ่ายใหม่</p>
             <div className="flex gap-2">
               <input
                 value={newName}
                 onChange={e => setNewName(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && handleAdd()}
                 placeholder="เช่น High Voltage, Control, BMS..."
-                className="flex-1 text-sm px-4 py-2.5 rounded-xl focus:outline-none transition-colors"
-                style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                className="input-base flex-1 text-[14px] px-3.5 py-2.5 rounded"
               />
               <button
                 onClick={handleAdd}
                 disabled={adding || !newName.trim()}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-40"
-                style={{ background: "var(--accent)" }}
-                onMouseEnter={e => !adding && (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
-                {adding ? "..." : "ADD +"}
+                className="btn-primary px-5 py-2.5 rounded text-[14px]">
+                {adding ? "…" : "เพิ่ม"}
               </button>
             </div>
           </div>
@@ -138,7 +133,7 @@ function DepartmentsContent() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {deptStats.map(dept => (
-                <div key={dept.id} className="group rounded-2xl p-5 transition-all"
+                <div key={dept.id} className="group rounded-lg p-5 transition-all"
                      style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
                      onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--border-bright)")}
                      onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}>
@@ -146,17 +141,17 @@ function DepartmentsContent() {
                   {/* Top row */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                           style={{ background: "var(--accent-dim)", border: "1px solid rgba(249,115,22,0.2)" }}>
+                      <div className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
+                           style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-bright)", borderLeft: "3px solid var(--brand)" }}>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
-                             style={{ color: "var(--accent)" }}>
+                             style={{ color: "var(--text-secondary)" }}>
                           <path strokeLinecap="round" strokeLinejoin="round"
                             d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{dept.departName}</p>
-                        <p className="text-[10px] font-mono tracking-widest uppercase mt-0.5" style={{ color: "var(--text-muted)" }}>
+                        <p className="font-semibold text-[14px]" style={{ color: "var(--text-primary)" }}>{dept.departName}</p>
+                        <p className="text-[10px] font-mono tracking-wider uppercase mt-0.5" style={{ color: "var(--text-muted)" }}>
                           dept
                         </p>
                       </div>

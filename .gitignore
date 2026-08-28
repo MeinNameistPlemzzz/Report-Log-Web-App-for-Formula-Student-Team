@@ -29,3 +29,9 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.swp
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Claude Code local config (เครื่องใครเครื่องมัน)
+.claude/

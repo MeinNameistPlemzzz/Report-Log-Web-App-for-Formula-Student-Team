@@ -12,13 +12,17 @@ export interface ReportType {
 }
 
 // 3. ชนิดข้อมูลผู้ใช้งานระบบ
+// หมายเหตุ: doc ในคอลเลกชัน "users" ใช้ "อีเมล (ตัวพิมพ์เล็ก)" เป็น ID
+// อีเมลคือ allowlist ในตัว — แอดมินสร้าง doc ไว้ก่อน = อนุญาตให้เข้าได้
+// ฟิลด์ uid จะถูกเติมอัตโนมัติตอนล็อกอินครั้งแรก ("claim")
 export interface UserProfile {
-  uid: string;
-  studentId: string;   
-  firstName: string;   
-  lastName: string;    
+  uid: string;         // auth uid — เติมตอน login ครั้งแรก
+  email: string;       // อีเมล = ตัวจับคู่บัญชี Google/password กับโปรไฟล์
+  studentId: string;
+  firstName: string;
+  lastName: string;
   departmentId: string;
-  isAdmin: boolean;    
+  isAdmin: boolean;
   createdAt: string;
 }
 

@@ -1,18 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle, resetPassword, user, unauthorized } = useAuth();
   const router = useRouter();
+
+  // ไปหน้าหลักก็ต่อเมื่อยืนยันแล้วว่าเป็นสมาชิกจริง (user ถูก set)
+  useEffect(() => {
+    if (user) router.push("/");
+  }, [user, router]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [resetMsg, setResetMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  const handleReset = async () => {
+    setError("");
+    setResetMsg("");
+    if (!email.trim()) {
+      setError("กรอกอีเมลในช่องด้านล่างก่อน แล้วกด “ลืมรหัสผ่าน”");
+      return;
+    }
+    try {
+      await resetPassword(email);
+      setResetMsg(`ส่งลิงก์รีเซ็ตรหัสผ่านไปที่ ${email.trim()} แล้ว — เช็คกล่องอีเมล (รวมทั้ง Spam)`);
+    } catch (err: any) {
+      if (err.code === "auth/user-not-found") {
+        setError("ไม่พบบัญชีรหัสผ่านของอีเมลนี้ — อาจใช้ Google อยู่ หรือยังไม่เคยตั้งรหัสผ่าน");
+      } else if (err.code === "auth/invalid-email") {
+        setError("รูปแบบอีเมลไม่ถูกต้อง");
+      } else {
+        setError("ส่งลิงก์ไม่สำเร็จ: " + (err?.message ?? ""));
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +49,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      router.push("/");
+      // ไม่ push เอง — ปล่อยให้ useEffect(user) จัดการหลังตรวจสิทธิ์เสร็จ
+      // ถ้าอีเมลไม่อยู่ใน allowlist จะขึ้นแถบเหลือง "ติดต่อแอดมิน" แทน
     } catch (err: any) {
       if (err.code === "auth/invalid-credential") {
         setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
@@ -32,72 +62,195 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogle = async () => {
+    setError("");
+    setGoogleLoading(true);
+    try {
+      await loginWithGoogle();
+      // ปล่อยให้ useEffect(user) พาไปหลังตรวจสิทธิ์เสร็จ
+    } catch (err: any) {
+      setError("เข้าสู่ระบบด้วย Google ไม่สำเร็จ: " + (err?.message ?? ""));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-base flex items-center justify-center px-4 relative overflow-hidden">
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: "var(--bg-base)" }}
+    >
+      <div className="w-full max-w-sm animate-fade-up">
+        {/* Masthead */}
+        <div className="flex items-center gap-3 mb-6">
+          <div
+            className="w-11 h-11 flex items-center justify-center flex-shrink-0 rounded"
+            style={{
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border-bright)",
+              borderLeft: "3px solid var(--brand)",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 16,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              IF
+            </span>
+          </div>
+          <div>
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 20,
+                fontWeight: 700,
+                color: "var(--text-primary)",
+                lineHeight: 1.1,
+              }}
+            >
+              INITIAL
+            </h1>
+            <p
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10.5,
+                color: "var(--text-muted)",
+                letterSpacing: "0.03em",
+              }}
+            >
+              Problem Log · KMITL Formula Student
+            </p>
+          </div>
+        </div>
 
-      {/* Background grid */}
-      <div className="absolute inset-0 bg-grid-pattern bg-grid opacity-100 pointer-events-none" />
-
-      {/* Glow orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
-
-      {/* Card */}
-      <div className="relative w-full max-w-sm animate-fade-up">
-        <div className="glass-bright rounded-2xl p-8 gradient-border">
-
-          {/* Logo */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-4 animate-pulse-glow">
-              <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-            </div>
-            <h1 className="font-display text-xl font-700 text-white tracking-widest uppercase">INITIAL</h1>
-            <p className="text-xs text-[var(--text-muted)] font-mono tracking-widest mt-1">REPORT LOG WEB APP</p>
+        {/* Card */}
+        <div
+          className="rounded-lg p-6"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+        >
+          <div className="mb-5 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
+            <p className="font-semibold text-[15px]" style={{ color: "var(--text-primary)" }}>
+              เข้าสู่ระบบ
+            </p>
+            <p className="text-[12px] mt-0.5" style={{ color: "var(--text-muted)" }}>
+              สำหรับสมาชิกทีมเท่านั้น
+            </p>
           </div>
 
-          {/* Error */}
+          {unauthorized && (
+            <div
+              className="mb-4 px-3.5 py-2.5 rounded text-[13px] animate-fade-in"
+              style={{
+                background: "var(--yellow-dim)",
+                border: "1px solid color-mix(in srgb, var(--yellow) 35%, transparent)",
+                color: "var(--yellow)",
+              }}
+            >
+              อีเมลนี้ยังไม่ได้รับสิทธิ์เข้าใช้งาน — ติดต่อแอดมินให้เพิ่มอีเมลของคุณเข้าระบบก่อน
+            </div>
+          )}
+
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-[var(--red-dim)] border border-red-500/20 text-red-400 text-sm animate-fade-in">
+            <div
+              className="mb-4 px-3.5 py-2.5 rounded text-[13px] animate-fade-in"
+              style={{
+                background: "var(--red-dim)",
+                border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)",
+                color: "var(--red)",
+              }}
+            >
               {error}
             </div>
           )}
 
+          {resetMsg && (
+            <div
+              className="mb-4 px-3.5 py-2.5 rounded text-[13px] animate-fade-in"
+              style={{
+                background: "var(--green-dim)",
+                border: "1px solid color-mix(in srgb, var(--green) 35%, transparent)",
+                color: "var(--green)",
+              }}
+            >
+              {resetMsg}
+            </div>
+          )}
+
+          {/* Google sign-in */}
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={googleLoading}
+            className="btn-ghost w-full py-2.5 rounded text-[14px] flex items-center justify-center gap-2.5 disabled:opacity-50"
+          >
+            {googleLoading ? (
+              <span
+                className="w-4 h-4 border-2 rounded-full animate-spin"
+                style={{ borderColor: "var(--border-bright)", borderTopColor: "var(--text-primary)" }}
+              />
+            ) : (
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" aria-hidden>
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+              </svg>
+            )}
+            เข้าสู่ระบบด้วย Google
+          </button>
+
+          {/* divider */}
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+            <span className="text-[11px] font-mono uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>หรือ</span>
+            <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
             <div>
-              <label className="block text-[11px] font-mono tracking-widest text-[var(--text-muted)] uppercase mb-2">
-                Email
-              </label>
+              <label className="field-label">Email</label>
               <input
                 type="email"
                 required
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@team.com"
-                className="input-base w-full px-4 py-3 rounded-xl text-sm"
+                className="input-base w-full px-3.5 py-2.5 rounded text-[14px]"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-[11px] font-mono tracking-widest text-[var(--text-muted)] uppercase mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="field-label">Password</label>
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="text-[12px] mb-1.5 hover:underline"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  ลืมรหัสผ่าน?
+                </button>
+              </div>
               <div className="relative">
                 <input
                   type={showPass ? "text" : "password"}
                   required
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="input-base w-full px-4 py-3 pr-11 rounded-xl text-sm"
+                  className="input-base w-full px-3.5 py-2.5 pr-10 rounded text-[14px]"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+                  onClick={() => setShowPass((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--text-muted)" }}
+                  aria-label={showPass ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
                 >
                   {showPass ? (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -113,32 +266,38 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary w-full py-3 rounded-xl text-sm mt-2 flex items-center justify-center gap-2"
+              className="btn-primary w-full py-2.5 rounded text-[14px] mt-1 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>กำลังตรวจสอบ...</span>
+                  <span
+                    className="w-4 h-4 border-2 rounded-full animate-spin"
+                    style={{ borderColor: "color-mix(in srgb, var(--on-accent) 40%, transparent)", borderTopColor: "var(--on-accent)" }}
+                  />
+                  กำลังตรวจสอบ…
                 </>
               ) : (
-                <>
-                  <span className="font-display tracking-widest">SIGN IN</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </>
+                "เข้าสู่ระบบ"
               )}
             </button>
           </form>
+
+          <p className="text-center mt-4 text-[13px]" style={{ color: "var(--text-muted)" }}>
+            สมาชิกใหม่ที่แอดมินเพิ่งเพิ่มเข้าระบบ?{" "}
+            <Link href="/register" className="hover:underline" style={{ color: "var(--text-primary)", fontWeight: 500 }}>
+              ตั้งรหัสผ่านครั้งแรก
+            </Link>
+          </p>
         </div>
 
-        {/* Bottom tag */}
-        <p className="text-center text-[10px] font-mono text-[var(--text-muted)] tracking-widest mt-4 uppercase">
-          Automotive Club · KMITL Formula Student Team
+        <p
+          className="text-center mt-5 text-[10.5px]"
+          style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)", letterSpacing: "0.03em" }}
+        >
+          Automotive Club · KMITL
         </p>
       </div>
     </div>

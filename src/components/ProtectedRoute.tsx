@@ -27,10 +27,18 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-zinc-400 text-sm tracking-widest uppercase">Loading...</span>
+          <div
+            className="w-7 h-7 border-2 rounded-full animate-spin"
+            style={{ borderColor: "var(--border-bright)", borderTopColor: "var(--accent)" }}
+          />
+          <span
+            className="text-[11px] tracking-widest uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}
+          >
+            Loading
+          </span>
         </div>
       </div>
     );

@@ -129,7 +129,10 @@ function ReportDetailContent() {
   if (loading) {
     return (
       <div className="flex-1 lg:ml-56 flex items-center justify-center min-h-screen">
-        <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+        <div
+          className="w-6 h-6 border-2 rounded-full animate-spin"
+          style={{ borderColor: "var(--border-bright)", borderTopColor: "var(--accent)" }}
+        />
       </div>
     );
   }
@@ -137,8 +140,8 @@ function ReportDetailContent() {
   if (notFound || !report) {
     return (
       <div className="flex-1 lg:ml-56 flex flex-col items-center justify-center min-h-screen gap-4">
-        <p className="text-zinc-400">ไม่พบรายการนี้</p>
-        <Link href="/" className="text-orange-400 text-sm hover:underline">กลับหน้าหลัก</Link>
+        <p style={{ color: "var(--text-secondary)" }}>ไม่พบรายการนี้</p>
+        <Link href="/" className="text-[13px] hover:underline" style={{ color: "var(--text-primary)" }}>กลับหน้าหลัก</Link>
       </div>
     );
   }
@@ -149,98 +152,113 @@ function ReportDetailContent() {
 
         {/* Back */}
         <div className="flex items-center justify-between pt-10 lg:pt-0">
-          <Link href="/" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-sm transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-[13px]" style={{ color: "var(--text-muted)" }}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            กลับ
           </Link>
           <div className="flex items-center gap-2">
             {canEdit && !editing && (
               <button
                 onClick={startEdit}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-sm rounded-lg hover:bg-zinc-700 transition-colors"
+                className="btn-ghost flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
-                Edit
+                แก้ไข
               </button>
             )}
             {canEdit && (
               <button
                 onClick={() => setShowDelete(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg hover:bg-red-500/20 transition-colors"
+                className="btn-danger flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Delete
+                ลบ
               </button>
             )}
           </div>
         </div>
 
         {/* Main detail card */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-5">
+        <div
+          className="rounded-lg p-6 space-y-5"
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+        >
           {editing ? (
             /* ---- Edit mode ---- */
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Problem</label>
+                <label className="field-label">Problem</label>
                 <input
                   value={editTitle}
                   onChange={e => setEditTitle(e.target.value)}
-                  className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500"
+                  className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Detail</label>
+                <label className="field-label">Detail</label>
                 <textarea
                   value={editDetail}
                   onChange={e => setEditDetail(e.target.value)}
                   rows={5}
-                  className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 resize-none"
+                  className="input-base w-full text-[14px] px-3.5 py-2.5 rounded resize-none leading-relaxed"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">Level</label>
+                <label className="field-label">Level</label>
                 <div className="flex flex-wrap gap-2">
-                  {(["Critical", "High", "Medium", "Low"] as const).map(s => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setEditSeverity(s)}
-                      className={`px-3 py-1 rounded text-xs font-semibold border transition-all
-                        ${editSeverity === s ? "border-orange-500 text-orange-400 bg-orange-500/10" : "border-zinc-700 text-zinc-500"}`}
-                    >
-                      {s}
-                    </button>
-                  ))}
+                  {([
+                    { v: "Critical", c: "var(--red)" },
+                    { v: "High",     c: "var(--orange)" },
+                    { v: "Medium",   c: "var(--yellow)" },
+                    { v: "Low",      c: "var(--text-secondary)" },
+                  ] as const).map(({ v, c }) => {
+                    const active = editSeverity === v;
+                    return (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setEditSeverity(v)}
+                        className="px-3.5 py-1.5 rounded text-[13px] font-medium transition-all"
+                        style={{
+                          border: `1px solid ${active ? c : "var(--border-bright)"}`,
+                          color: active ? c : "var(--text-secondary)",
+                          background: active ? `color-mix(in srgb, ${c} 10%, transparent)` : "var(--bg-surface)",
+                        }}
+                      >
+                        {v}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 uppercase tracking-widest mb-2">File Link</label>
+                <label className="field-label">File Link</label>
                 <input
                   value={editDriveLink}
                   onChange={e => setEditDriveLink(e.target.value)}
                   placeholder="https://..."
-                  className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 placeholder-zinc-600"
+                  className="input-base w-full text-[14px] px-3.5 py-2.5 rounded"
                 />
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setEditing(false)}
-                  className="flex-1 px-4 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition-colors"
+                  className="btn-ghost flex-1 px-4 py-2 rounded text-[14px]"
                 >
-                  Cancel
+                  ยกเลิก
                 </button>
                 <button
                   onClick={saveEdit}
                   disabled={saving}
-                  className="flex-1 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+                  className="btn-primary flex-1 px-4 py-2 rounded text-[14px]"
                 >
-                  {saving ? "Saving..." : "Save"}
+                  {saving ? "กำลังบันทึก…" : "บันทึก"}
                 </button>
               </div>
             </div>
@@ -248,46 +266,42 @@ function ReportDetailContent() {
             /* ---- View mode ---- */
             <>
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <h1 className="text-xl font-bold text-zinc-100">{report.title}</h1>
+                <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>{report.title}</h1>
                 <SeverityBadge severity={report.severity} />
               </div>
 
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-[14px]">
+                {[
+                  { label: "Department", value: report.department.name },
+                  { label: "Type", value: report.reportType.name },
+                  { label: "Created by", value: report.createdBy.fullName },
+                  { label: "Date", value: formatDate(report.createdAt) },
+                ].map(item => (
+                  <div key={item.label}>
+                    <span className="field-label" style={{ marginBottom: 2 }}>{item.label}</span>
+                    <p style={{ color: "var(--text-primary)" }}>{item.value}</p>
+                  </div>
+                ))}
                 <div>
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest">Department</span>
-                  <p className="text-zinc-300">{report.department.name}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest">Type</span>
-                  <p className="text-zinc-300">{report.reportType.name}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest">Status</span>
-                  <div className="mt-0.5"><StatusBadge status={report.status} /></div>
-                </div>
-                <div>
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest">Created by</span>
-                  <p className="text-zinc-300">{report.createdBy.fullName}</p>
-                </div>
-                <div>
-                  <span className="text-zinc-600 text-xs uppercase tracking-widest">Date</span>
-                  <p className="text-zinc-300">{formatDate(report.createdAt)}</p>
+                  <span className="field-label" style={{ marginBottom: 4 }}>Status</span>
+                  <StatusBadge status={report.status} />
                 </div>
               </div>
 
-              <div className="border-t border-zinc-800 pt-4">
-                <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2">Detail</p>
-                <p className="text-zinc-300 text-sm whitespace-pre-wrap leading-relaxed">{report.detail}</p>
+              <div className="pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+                <p className="field-label">Detail</p>
+                <p className="text-[14px] whitespace-pre-wrap leading-relaxed" style={{ color: "var(--text-secondary)" }}>{report.detail}</p>
               </div>
 
               {report.driveLink && (
-                <div className="border-t border-zinc-800 pt-4">
-                  <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2">File / Drive Link</p>
+                <div className="pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+                  <p className="field-label">File / Drive Link</p>
                   <a
                     href={report.driveLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 text-sm transition-colors"
+                    className="inline-flex items-center gap-2 text-[14px] hover:underline"
+                    style={{ color: "var(--blue)" }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -298,9 +312,9 @@ function ReportDetailContent() {
               )}
 
               {report.resolution && (
-                <div className="border-t border-zinc-800 pt-4">
-                  <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2">Resolution</p>
-                  <p className="text-zinc-300 text-sm whitespace-pre-wrap leading-relaxed">{report.resolution}</p>
+                <div className="pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+                  <p className="field-label" style={{ color: "var(--green)" }}>Resolution · วิธีแก้</p>
+                  <p className="text-[14px] whitespace-pre-wrap leading-relaxed" style={{ color: "var(--text-secondary)" }}>{report.resolution}</p>
                 </div>
               )}
             </>
@@ -309,36 +323,50 @@ function ReportDetailContent() {
 
         {/* Status update card — admin only */}
         {profile?.isAdmin && !editing && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-300 tracking-wide">Update Status</h2>
+          <div
+            className="rounded-lg p-6 space-y-4"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+          >
+            <h2 className="text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>อัปเดตสถานะ</h2>
             <div className="flex flex-wrap gap-2">
-              {(["Pending", "In Progress", "Resolved"] as const).map(s => (
-                <button
-                  key={s}
-                  onClick={() => setNewStatus(s)}
-                  className={`px-3 py-1.5 rounded text-xs font-medium border transition-all
-                    ${newStatus === s ? "border-orange-500 text-orange-400 bg-orange-500/10" : "border-zinc-700 text-zinc-500 hover:border-zinc-600"}`}
-                >
-                  {s}
-                </button>
-              ))}
+              {([
+                { v: "Pending", c: "var(--text-secondary)" },
+                { v: "In Progress", c: "var(--blue)" },
+                { v: "Resolved", c: "var(--green)" },
+              ] as const).map(({ v, c }) => {
+                const active = newStatus === v;
+                return (
+                  <button
+                    key={v}
+                    onClick={() => setNewStatus(v)}
+                    className="px-3.5 py-1.5 rounded text-[13px] font-medium transition-all"
+                    style={{
+                      border: `1px solid ${active ? c : "var(--border-bright)"}`,
+                      color: active ? c : "var(--text-secondary)",
+                      background: active ? `color-mix(in srgb, ${c} 10%, transparent)` : "var(--bg-surface)",
+                    }}
+                  >
+                    {v}
+                  </button>
+                );
+              })}
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 uppercase tracking-widest mb-2">Resolution note</label>
+              <label className="field-label">Resolution note · บันทึกวิธีแก้</label>
               <textarea
                 value={resolution}
                 onChange={e => setResolution(e.target.value)}
                 rows={3}
-                placeholder="บันทึกวิธีแก้ไข..."
-                className="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm px-4 py-2.5 rounded-lg focus:outline-none focus:border-orange-500 placeholder-zinc-600 resize-none"
+                placeholder="แก้ยังไง เปลี่ยนอะไร ใครแก้..."
+                className="input-base w-full text-[14px] px-3.5 py-2.5 rounded resize-none leading-relaxed"
               />
             </div>
             <button
               onClick={handleStatusUpdate}
               disabled={updatingStatus}
-              className="px-5 py-2 bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+              className="btn-primary px-5 py-2 rounded text-[14px]"
             >
-              {updatingStatus ? "Updating..." : "Update Status"}
+              {updatingStatus ? "กำลังอัปเดต…" : "อัปเดตสถานะ"}
             </button>
           </div>
         )}
@@ -346,15 +374,18 @@ function ReportDetailContent() {
 
       {/* Delete modal */}
       {showDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowDelete(false)} />
-          <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 shadow-2xl w-full max-w-sm mx-4">
-            <p className="text-zinc-100 font-semibold mb-1">ลบรายการนี้?</p>
-            <p className="text-zinc-500 text-sm mb-5">การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in">
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.45)" }} onClick={() => setShowDelete(false)} />
+          <div
+            className="relative rounded-lg p-6 w-full max-w-sm animate-fade-up"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border-bright)", boxShadow: "var(--shadow)" }}
+          >
+            <p className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>ลบรายการนี้?</p>
+            <p className="text-[13px] mb-5" style={{ color: "var(--text-muted)" }}>การลบไม่สามารถย้อนกลับได้</p>
             <div className="flex gap-3">
-              <button onClick={() => setShowDelete(false)} disabled={deleting} className="flex-1 px-4 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition-colors">No</button>
-              <button onClick={handleDelete} disabled={deleting} className="flex-1 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-400 text-white text-sm font-semibold transition-colors disabled:opacity-50">
-                {deleting ? "Deleting..." : "Delete"}
+              <button onClick={() => setShowDelete(false)} disabled={deleting} className="btn-ghost flex-1 px-4 py-2 rounded text-[14px]">ยกเลิก</button>
+              <button onClick={handleDelete} disabled={deleting} className="btn-danger flex-1 px-4 py-2 rounded text-[14px]">
+                {deleting ? "กำลังลบ…" : "ลบ"}
               </button>
             </div>
           </div>
@@ -367,7 +398,7 @@ function ReportDetailContent() {
 export default function ReportDetailPage() {
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-zinc-950">
+      <div className="flex min-h-screen" style={{ background: "var(--bg-base)" }}>
         <Sidebar />
         <ReportDetailContent />
       </div>
